@@ -49,24 +49,27 @@ onMounted(() => {
     <button
         id="primaryButton"
         @click="buttonClick"
-        class="relative inline-flex flex-row items-center py-[4px] pl-[7px] space-x-[12px] pr-[7px] m-0 md:w-[320px] rounded-2xl text-white text-[17px] border-2 border-transparent hover:bg-gray-500 focus:border-gray-400"
+        class="relative m-0 inline-flex w-[265px] flex-row items-center space-x-[12px] rounded-2xl border-2 border-transparent py-[4px] pl-[7px] pr-[7px] text-[17px] text-white transition hover:bg-gray-500 focus:border-gray-400 md:w-[320px]"
         :class="crewUserData.status"
     >
         <img
-            class="flex-none w-[25px] h-[25px] p-0 ml-0 my-0 mr-[8px]"
+            class="my-0 ml-0 mr-[8px] h-[25px] w-[25px] flex-none p-0"
             :src="logo"
         />
-        <div v-if="loading" class="flex-none">
-            <SpinnerIcon class="w-5 h-5 fill-white animate-spin"></SpinnerIcon>
+        <div
+            v-if="loading"
+            class="absolute left-[30px]"
+        >
+            <SpinnerIcon class="h-3 w-3 animate-spin fill-white"></SpinnerIcon>
         </div>
-        <div class="flex-auto pl-[6px] pr-[16px] py-0 m-0">
-            <span class="text-[14px] p-0 m-0">{{ buttonText }}</span>
+        <div class="m-0 flex-auto py-0 pl-[6px] pr-[16px]">
+            <span class="m-0 p-0 text-[14px]">{{ buttonText }}</span>
         </div>
         <div
             v-if="inDev"
-            class="absolute text-right right-[5px] -top-[5px] m-0 p-0"
+            class="absolute right-[5px] -top-[5px] m-0 p-0 text-right"
         >
-            <span class="text-[16px] text-red-700 m-0 pt-0">&#9210;</span>
+            <span class="m-0 pt-0 text-[16px] text-red-700">&#9210;</span>
         </div>
     </button>
 </template>
@@ -76,6 +79,7 @@ onMounted(() => {
 #primaryButton {
     font-weight: 600;
     letter-spacing: -0.5px;
+    line-height: 15px;
     font-family: "Montserrat", Arial, Helvetica, sans-serif;
 }
 

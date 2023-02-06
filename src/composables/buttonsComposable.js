@@ -7,8 +7,7 @@ const logo =
     "https://storage.googleapis.com/crewpass-production-loginbutton/cp-icon.png";
 const buttonText = ref("Approve With CrewPass");
 const popupBaseUrl = ref(
-    import.meta.env.VITE_POPUP_BASE_URL ||
-    "https://verify-dev.crewpass.co.uk"
+    import.meta.env.VITE_POPUP_BASE_URL || "https://verify-dev.crewpass.co.uk"
 );
 const commitId = import.meta.env.VITE_COMMIT_ID || null;
 const environment = import.meta.env.VITE_ENVIRONMENT || null;
@@ -40,8 +39,9 @@ const content = {
     },
 };
 
-
-const crewUserData = useStorage(`cp-crew-button-user`, { status: "not-checked" });
+const crewUserData = useStorage(`cp-crew-button-user`, {
+    status: "not-checked",
+});
 
 const setContent = (status) => {
     console.log("setting content");
@@ -57,7 +57,7 @@ const loading = ref(false);
 
 const sanitizedParams = computed(() => {
     const keys = {
-        cpPartner: "partner"
+        cpPartner: "partner",
     };
     return remapData(keys, inputData.data);
 });
@@ -84,6 +84,8 @@ const popupOrigin = computed(() => {
     return popupFullUrlObject.value?.origin;
 });
 const buttonClick = () => {
+    // loading.value = true;
+    // setContent("loading");
     window.open(
         popupFullUrl.value,
         "cpAgencyCrewV2LoginPopup",
@@ -142,6 +144,6 @@ export function useButtonsComposable() {
         setButtonData,
         crewUserData,
         commitId,
-        environment
+        environment,
     };
 }

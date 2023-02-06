@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: "Montserrat";
+    src: url("https://storage.googleapis.com/crewpass-development-loginbutton/Montserrat-Medium.woff") format("woff2"),
+        url("https://storage.googleapis.com/crewpass-development-loginbutton/Montserrat-Medium.woff2") format("woff");
+}

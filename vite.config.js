@@ -9,9 +9,9 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        entryFileNames: `assets/[name].js`,
-        chunkFileNames: `assets/[name].js`,
-        assetFileNames: `assets/[name].[ext]`
+        entryFileNames: `assets/crewpass-crewbutton-v2.js`,
+        chunkFileNames: `assets/crewpass-crewbutton-v2.js`,
+        assetFileNames: `assets/crewpass-crewbutton-v2.[ext]`
       }
     }
   },

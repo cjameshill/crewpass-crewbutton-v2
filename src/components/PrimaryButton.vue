@@ -47,7 +47,7 @@ onMounted(() => {
 </script>
 <template>
     <div class="relative m-0 mb-[10px] w-[256px] p-0 md:w-[320px]">
-        <button
+        <div
             id="cp_primaryButton"
             @click="buttonClick"
             class="relative m-0 inline-flex w-full flex-row items-center space-x-[12px] rounded-2xl border-2 border-transparent py-[4px] pl-[7px] pr-[7px] text-[17px] text-white transition hover:bg-gray-500 focus:border-gray-400"
@@ -74,7 +74,7 @@ onMounted(() => {
             >
                 <span class="m-0 pt-0 text-[16px] text-red-700">&#9210;</span>
             </div>
-        </button>
+        </div>
         <div
             v-if="
                 inputData &&

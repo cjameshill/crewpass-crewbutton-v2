@@ -1,5 +1,5 @@
 
-export default async (request, context) => {
+export default async function handler(request, context) {
     console.log("setting cookies");
     context.cookies.set({
         name: "CP-Session",
@@ -9,3 +9,6 @@ export default async (request, context) => {
 
     return new Response(message);
 };
+export const config = {
+    path: "/session"
+}

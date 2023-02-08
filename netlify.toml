@@ -6,4 +6,4 @@
 
 [[edge_functions]]
   function = "session"
-  path = "/*"
+  path = "/assets/*.js"

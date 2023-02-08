@@ -4,7 +4,7 @@ export default async (request, context) => {
     console.log(`Adding a custom cookie to the response for ${url}`);
     const session = context.cookies.get("cp-session");
     if (!session) {
-        const id = v4().generate();
+        const id = v4.generate();
         context.cookies.set({ name: "cp-session", value: id })
     }
     return await context.next();

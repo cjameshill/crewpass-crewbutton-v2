@@ -6,7 +6,8 @@ export default async (request, context) => {
     console.log("session: ", session);
     if (!session) {
         const id = v4.generate();
-        context.cookies.set({ name: "cp-session", value: id })
+        context.cookies.set({ name: "cp-session-id", value: id });
+        context.cookies.set({ name: "cp-session", value: "cp-session" });
     }
     return await context.next();
 };

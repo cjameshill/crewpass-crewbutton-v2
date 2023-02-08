@@ -14,9 +14,27 @@
         <title>Crewpass CrewButton - V2</title>
     </head>
     <body style="padding-top: 100px; padding-left: 30px">
+        <form
+            id="crewForm"
+            action="/"
+            style="margin: 30px auto"
+        >
+            <input
+                type="text"
+                name="name"
+                placeholder="First name"
+            />
+            <button
+                class="bg-blue-800"
+                type="submit"
+            >
+                Submit
+            </button>
+        </form>
         <div
             id="cp-agency-crew-profile-button"
             data-cp-partner="vipyacht"
+            data-cp-action="email"
         ></div>
         <script
             type="module"

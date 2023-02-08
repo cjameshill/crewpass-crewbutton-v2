@@ -16,6 +16,8 @@ const {
     setMessageResponse,
     commitId,
     environment,
+    inputData,
+    attachResponseToForm,
 } = useButtonsComposable();
 const messages = ref([]);
 
@@ -41,43 +43,55 @@ onMounted(() => {
     if (crewUserData.value && crewUserData.value?.status) {
         setContent(crewUserData.value?.status?.toLowerCase());
     }
-    console.log("commit id: ", commitId);
-    console.log("env: ", environment);
 });
 </script>
 <template>
-    <button
-        id="primaryButton"
-        @click="buttonClick"
-        class="relative m-0 inline-flex w-[265px] flex-row items-center space-x-[12px] rounded-2xl border-2 border-transparent py-[4px] pl-[7px] pr-[7px] text-[17px] text-white transition hover:bg-gray-500 focus:border-gray-400 md:w-[320px]"
-        :class="crewUserData.status"
-    >
-        <img
-            class="my-0 ml-0 mr-[8px] h-[25px] w-[25px] flex-none p-0"
-            :src="logo"
-        />
-        <div
-            v-if="loading"
-            class="absolute left-[30px]"
+    <div class="relative m-0 mb-[10px] w-[256px] p-0 md:w-[320px]">
+        <button
+            id="cp_primaryButton"
+            @click="buttonClick"
+            class="relative m-0 inline-flex w-full flex-row items-center space-x-[12px] rounded-2xl border-2 border-transparent py-[4px] pl-[7px] pr-[7px] text-[17px] text-white transition hover:bg-gray-500 focus:border-gray-400"
+            :class="crewUserData.status"
         >
-            <SpinnerIcon class="h-3 w-3 animate-spin fill-white"></SpinnerIcon>
-        </div>
-        <div class="m-0 flex-auto py-0 pl-[6px] pr-[16px]">
-            <span class="m-0 p-0 text-[14px]">{{ buttonText }}</span>
-        </div>
+            <img
+                class="my-0 ml-0 mr-[8px] h-[25px] w-[25px] flex-none p-0"
+                :src="logo"
+            />
+            <div
+                v-if="loading"
+                class="absolute left-[30px]"
+            >
+                <SpinnerIcon
+                    class="h-3 w-3 animate-spin fill-white"
+                ></SpinnerIcon>
+            </div>
+            <div class="m-0 flex-auto py-0 pl-[6px] pr-[16px]">
+                <span class="m-0 p-0 text-[14px]">{{ buttonText }}</span>
+            </div>
+            <div
+                v-if="inDev"
+                class="absolute right-[5px] -top-[5px] m-0 p-0 text-right"
+            >
+                <span class="m-0 pt-0 text-[16px] text-red-700">&#9210;</span>
+            </div>
+        </button>
         <div
-            v-if="inDev"
-            class="absolute right-[5px] -top-[5px] m-0 p-0 text-right"
+            v-if="
+                inputData &&
+                inputData.experimentalFeatures &&
+                crewUserData &&
+                crewUserData.crewEmail
+            "
+            class="absolute -bottom-[17px] right-0 m-0 py-0 pl-0 pr-[18px]"
         >
-            <span class="m-0 pt-0 text-[16px] text-red-700">&#9210;</span>
+            <div class="text-[9px] text-gray-400">logged in as</div>
         </div>
-    </button>
+    </div>
 </template>
 <style scoped>
 @import "../style.css";
 
-#primaryButton {
-    font-weight: 600;
+#cp_primaryButton {
     letter-spacing: -0.5px;
     line-height: 15px;
     font-family: "Montserrat", Arial, Helvetica, sans-serif;

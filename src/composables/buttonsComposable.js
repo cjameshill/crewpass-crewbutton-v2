@@ -58,8 +58,11 @@ const loading = ref(false);
 const sanitizedParams = computed(() => {
     const keys = {
         cpPartner: "partner",
+        cpAction: "action"
     };
-    return remapData(keys, inputData.data);
+    let remappedData = remapData(keys, inputData.data);
+    remappedData.version = "v2";
+    return remapData;
 });
 const queryParams = computed(() => {
     const params = new URLSearchParams(sanitizedParams.value);
@@ -108,6 +111,7 @@ watch(crewUserData, (newValue) => {
     console.log("crew user data updated: ", newValue);
     if (newValue.status) {
         setContent(newValue.status?.toLowerCase());
+        attachResponseToForm(newValue);
     }
 });
 
@@ -128,6 +132,24 @@ const setMessageResponse = (data) => {
     }
 };
 
+const createHiddenFormInput = (form, name = "", value = "") => {
+    const input = document.createElement("input");
+    input.setAttribute("type", "hidden");
+    input.setAttribute("name", name);
+    input.setAttribute("value", value);
+    form.appendChild(input);
+    return { name, value }
+}
+
+const attachResponseToForm = (data = {}) => {
+    const forms = document.querySelectorAll("form");
+    for (let form of forms) {
+        for (const item in data) {
+            createHiddenFormInput(form, item, data[item]);
+        }
+    }
+};
+
 export function useButtonsComposable() {
     return {
         buttonText,
@@ -145,5 +167,6 @@ export function useButtonsComposable() {
         crewUserData,
         commitId,
         environment,
+        attachResponseToForm
     };
 }

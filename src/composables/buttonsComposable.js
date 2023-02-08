@@ -12,7 +12,13 @@ const popupBaseUrl = ref(
 const commitId = import.meta.env.VITE_COMMIT_ID || null;
 const environment = import.meta.env.VITE_ENVIRONMENT || null;
 
-const formDataKeys = ref(["crewpass-crew-name", "crewpass-crew-crewUniqueId", "crewpass-crew-email", "crewpass-crew-status"])
+const formDataKeys = ref([])
+const formDataKeyBindings = {
+    "crewpass-crew-name": "cpInputidCrewname",
+    "crewpass-crew-crewUniqueId": "cpInputidCrewid",
+    "crewpass-crew-email": "cpInputidCrewemail",
+    "crewpass-crew-status": "cpInputidCrewstatus"
+}
 const content = {
     buttonText: "Approve with CrewPass",
     pleaseWait: "Please wait...",
@@ -122,12 +128,6 @@ watch(crewUserData, (newValue) => {
         setContent(newValue.status?.toLowerCase());
         attachResponseToForm(newValue);
     }
-    if (newValue.formData) {
-        formDataKeys.value = [];
-        for (let key in newValue.formData) {
-            formDataKeys.value.push(key);
-        }
-    }
 });
 
 const setButtonData = (dataset) => {
@@ -172,13 +172,26 @@ const removeHiddenFormInput = (name = "") => {
     return { name }
 }
 
+//*  Get form input id if using custom form input id
+//- if not return default key * /
+
+const getInputId = (key) => {
+    if (!inputData.data) {
+        return key;
+    }
+    return inputData.data[formDataKeyBindings[key]] || key;
+}
+
 const attachResponseToForm = (data = {}) => {
     if (!data || !data.formData) return null;
     const forms = document.querySelectorAll("form");
     for (let form of forms) {
         const formData = data.formData;
-        for (const item in formData) {
-            createHiddenFormInput(form, item, formData[item]);
+        for (const key in formData) {
+            const inputId = getInputId(key);
+            console.log("input id: ", inputId);
+            formDataKeys.value.push(inputId);
+            createHiddenFormInput(form, inputId, formData[key]);
         }
     }
 };

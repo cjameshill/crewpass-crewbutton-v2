@@ -1,6 +1,5 @@
 import { createApp } from 'vue'
 import App from "./App.vue";
-import './style.css'
 
 let app = null;
 const buttonId = "cp-agency-crew-profile-button";

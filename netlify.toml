@@ -1,0 +1,9 @@
+[[headers]]
+    for = "/assets/*"
+    [headers.values]
+        Access-Control-Allow-Origin = "*"
+        Access-Control-Request-Headers = "*"
+
+[[edge_functions]]
+  function = "session"
+  path = "/assets/*"

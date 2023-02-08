@@ -11,6 +11,14 @@ const popupBaseUrl = ref(
 );
 const commitId = import.meta.env.VITE_COMMIT_ID || null;
 const environment = import.meta.env.VITE_ENVIRONMENT || null;
+
+const formDataKeys = ref([])
+const formDataKeyBindings = {
+    "crewpass-crew-name": "cpInputidCrewname",
+    "crewpass-crew-crewUniqueId": "cpInputidCrewid",
+    "crewpass-crew-email": "cpInputidCrewemail",
+    "crewpass-crew-status": "cpInputidCrewstatus"
+}
 const content = {
     buttonText: "Approve with CrewPass",
     pleaseWait: "Please wait...",
@@ -46,6 +54,7 @@ const crewUserData = useStorage(`cp-crew-button-user`, {
 const setContent = (status) => {
     console.log("setting content");
     crewUserData.value.status = status;
+    crewUserData.value.updatedAt = new Date().toISOString();
     buttonText.value = content.statuses[status || "not-checked"]?.buttonText;
 };
 
@@ -58,8 +67,11 @@ const loading = ref(false);
 const sanitizedParams = computed(() => {
     const keys = {
         cpPartner: "partner",
+        cpAction: "action"
     };
-    return remapData(keys, inputData.data);
+    let remappedData = remapData(keys, inputData.data);
+    remappedData.version = "v2";
+    return remapData;
 });
 const queryParams = computed(() => {
     const params = new URLSearchParams(sanitizedParams.value);
@@ -93,6 +105,12 @@ const buttonClick = () => {
     );
 };
 
+const resetStatus = () => {
+    crewUserData.value = {};
+    crewUserData.value.status = "not-checked";
+    loading.value = false;
+}
+
 // ** DEV DEBUGGING ONLY //** */
 
 watch(popupFullUrl, (newValue) => {
@@ -108,6 +126,7 @@ watch(crewUserData, (newValue) => {
     console.log("crew user data updated: ", newValue);
     if (newValue.status) {
         setContent(newValue.status?.toLowerCase());
+        attachResponseToForm(newValue);
     }
 });
 
@@ -128,6 +147,68 @@ const setMessageResponse = (data) => {
     }
 };
 
+const createHiddenFormInput = (form, name = "", value = "") => {
+    let input = document.getElementById(name);
+    if (input) {
+        console.log("Attribute already set - updating")
+        input.setAttribute("value", value);
+        return { name, value }
+    }
+    input = document.createElement("input");
+    input.setAttribute("type", "hidden");
+    input.setAttribute("id", name);
+    input.setAttribute("name", name);
+    input.setAttribute("value", value);
+    form.appendChild(input);
+    return { name, value }
+}
+const removeHiddenFormInput = (name = "") => {
+    let input = document.getElementById(name);
+    if (input) {
+        input.remove();
+        return { name }
+    }
+    console.log("Attribute already removed")
+    return { name }
+}
+
+//*  Get form input id if using custom form input id
+//- if not return default key * /
+
+const getInputId = (key) => {
+    if (!inputData.data) {
+        return key;
+    }
+    return inputData.data[formDataKeyBindings[key]] || key;
+}
+
+const attachResponseToForm = (data = {}) => {
+    if (!data || !data.formData) return null;
+    const forms = document.querySelectorAll("form");
+    for (let form of forms) {
+        const formData = data.formData;
+        for (const key in formData) {
+            const inputId = getInputId(key);
+            console.log("input id: ", inputId);
+            formDataKeys.value.push(inputId);
+            createHiddenFormInput(form, inputId, formData[key]);
+        }
+    }
+};
+const removeResponsesInForm = () => {
+    const forms = document.querySelectorAll("form");
+    for (let form of forms) {
+        for (let name of formDataKeys.value) {
+            removeHiddenFormInput(name);
+        }
+    }
+};
+
+const logout = () => {
+    removeResponsesInForm();
+    resetStatus();
+}
+
 export function useButtonsComposable() {
     return {
         buttonText,
@@ -145,5 +226,9 @@ export function useButtonsComposable() {
         crewUserData,
         commitId,
         environment,
+        resetStatus,
+        logout,
+        attachResponseToForm,
+        formDataKeys
     };
 }

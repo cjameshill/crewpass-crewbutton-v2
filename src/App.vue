@@ -5,4 +5,5 @@ import PrimaryButton from "@/components/PrimaryButton.vue";
 <template>
     <PrimaryButton></PrimaryButton>
 </template>
+
 <style></style>

@@ -50,7 +50,7 @@ onMounted(() => {
         <div
             id="cp_primaryButton"
             @click="buttonClick"
-            class="relative m-0 inline-flex w-full flex-row items-center space-x-[12px] rounded-2xl border-2 border-transparent py-[4px] pl-[7px] pr-[7px] text-[17px] text-white transition hover:bg-gray-500 focus:border-gray-400"
+            class="relative m-0 inline-flex w-full cursor-pointer flex-row items-center space-x-[12px] rounded-[30px] border-2 border-transparent py-[6px] pl-[7px] pr-[7px] text-[17px] text-white transition hover:bg-gray-500 focus:border-gray-400"
             :class="crewUserData.status"
         >
             <img
@@ -65,7 +65,7 @@ onMounted(() => {
                     class="h-3 w-3 animate-spin fill-white"
                 ></SpinnerIcon>
             </div>
-            <div class="m-0 flex-auto py-0 pl-[6px] pr-[16px]">
+            <div class="m-0 flex-auto py-0 pl-[0px] pr-[16px] text-center">
                 <span class="m-0 p-0 text-[14px]">{{ buttonText }}</span>
             </div>
             <div

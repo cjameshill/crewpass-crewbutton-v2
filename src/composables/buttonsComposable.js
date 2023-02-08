@@ -11,6 +11,8 @@ const popupBaseUrl = ref(
 );
 const commitId = import.meta.env.VITE_COMMIT_ID || null;
 const environment = import.meta.env.VITE_ENVIRONMENT || null;
+
+const formDataKeys = ref(["crewpass-crew-name", "crewpass-crew-crewUniqueId", "crewpass-crew-email", "crewpass-crew-status"])
 const content = {
     buttonText: "Approve with CrewPass",
     pleaseWait: "Please wait...",
@@ -46,6 +48,7 @@ const crewUserData = useStorage(`cp-crew-button-user`, {
 const setContent = (status) => {
     console.log("setting content");
     crewUserData.value.status = status;
+    crewUserData.value.updatedAt = new Date().toISOString();
     buttonText.value = content.statuses[status || "not-checked"]?.buttonText;
 };
 
@@ -96,6 +99,12 @@ const buttonClick = () => {
     );
 };
 
+const resetStatus = () => {
+    crewUserData.value = {};
+    crewUserData.value.status = "not-checked";
+    loading.value = false;
+}
+
 // ** DEV DEBUGGING ONLY //** */
 
 watch(popupFullUrl, (newValue) => {
@@ -112,6 +121,12 @@ watch(crewUserData, (newValue) => {
     if (newValue.status) {
         setContent(newValue.status?.toLowerCase());
         attachResponseToForm(newValue);
+    }
+    if (newValue.formData) {
+        formDataKeys.value = [];
+        for (let key in newValue.formData) {
+            formDataKeys.value.push(key);
+        }
     }
 });
 
@@ -133,22 +148,53 @@ const setMessageResponse = (data) => {
 };
 
 const createHiddenFormInput = (form, name = "", value = "") => {
-    const input = document.createElement("input");
+    let input = document.getElementById(name);
+    if (input) {
+        console.log("Attribute already set - updating")
+        input.setAttribute("value", value);
+        return { name, value }
+    }
+    input = document.createElement("input");
     input.setAttribute("type", "hidden");
+    input.setAttribute("id", name);
     input.setAttribute("name", name);
     input.setAttribute("value", value);
     form.appendChild(input);
     return { name, value }
 }
+const removeHiddenFormInput = (name = "") => {
+    let input = document.getElementById(name);
+    if (input) {
+        input.remove();
+        return { name }
+    }
+    console.log("Attribute already removed")
+    return { name }
+}
 
 const attachResponseToForm = (data = {}) => {
+    if (!data || !data.formData) return null;
     const forms = document.querySelectorAll("form");
     for (let form of forms) {
-        for (const item in data) {
-            createHiddenFormInput(form, item, data[item]);
+        const formData = data.formData;
+        for (const item in formData) {
+            createHiddenFormInput(form, item, formData[item]);
         }
     }
 };
+const removeResponsesInForm = () => {
+    const forms = document.querySelectorAll("form");
+    for (let form of forms) {
+        for (let name of formDataKeys.value) {
+            removeHiddenFormInput(name);
+        }
+    }
+};
+
+const logout = () => {
+    removeResponsesInForm();
+    resetStatus();
+}
 
 export function useButtonsComposable() {
     return {
@@ -167,6 +213,9 @@ export function useButtonsComposable() {
         crewUserData,
         commitId,
         environment,
-        attachResponseToForm
+        resetStatus,
+        logout,
+        attachResponseToForm,
+        formDataKeys
     };
 }

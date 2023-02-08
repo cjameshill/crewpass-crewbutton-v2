@@ -4,6 +4,7 @@ import { useEventListener } from "@vueuse/core";
 
 import { useButtonsComposable } from "@/composables/buttonsComposable";
 import SpinnerIcon from "@/components/SpinnerIcon.vue";
+import parse from "simple-parse-json";
 const {
     buttonText,
     logo,
@@ -14,24 +15,26 @@ const {
     setButtonData,
     setContent,
     setMessageResponse,
-    commitId,
-    environment,
     inputData,
-    attachResponseToForm,
+    logout,
+    formDataKeys,
 } = useButtonsComposable();
 const messages = ref([]);
 
 const inDev = import.meta.env.VITE_ENVIRONMENT === "dev";
 
 useEventListener(window, "message", (message) => {
-    console.log("message origin: ", message.origin);
-    console.log("message: ", message.data);
     if (message.origin === popupOrigin.value) {
         console.log("message: ", message);
-        messages.value.push(message.data);
-        if (message.data?.status && message.data?.cpUniqueId) {
-            console.log("setting message response: ", message.data);
-            setMessageResponse(message.data);
+        const messageData = parse(message.data || {});
+        messages.value.push(messageData);
+        if (
+            messageData?.status &&
+            messageData?.user &&
+            messageData?.status !== "closed"
+        ) {
+            console.log("setting message response: ", messageData);
+            setMessageResponse(messageData);
         }
     }
 });
@@ -46,15 +49,18 @@ onMounted(() => {
 });
 </script>
 <template>
-    <div class="relative m-0 mb-[10px] w-[256px] p-0 md:w-[320px]">
+    <div
+        id="cp_primaryButtonHold"
+        class="relative m-0 mb-[10px] w-[256px] p-0 md:w-[320px]"
+    >
         <div
             id="cp_primaryButton"
             @click="buttonClick"
-            class="relative m-0 inline-flex w-full cursor-pointer flex-row items-center space-x-[12px] rounded-[30px] border-2 border-transparent py-[6px] pl-[7px] pr-[7px] text-[17px] text-white transition hover:bg-gray-500 focus:border-gray-400"
+            class="relative m-0 inline-flex w-full cursor-pointer flex-row items-center justify-center space-x-[12px] rounded-[30px] border-2 border-transparent py-[6px] pl-[7px] pr-[7px] text-[17px] text-white transition hover:bg-gray-500 focus:border-gray-400 active:border-gray-500 active:bg-gray-600"
             :class="crewUserData.status"
         >
             <img
-                class="my-0 ml-0 mr-[8px] h-[25px] w-[25px] flex-none p-0"
+                class="my-0 mx-0 h-[25px] w-[25px]"
                 :src="logo"
             />
             <div
@@ -65,7 +71,7 @@ onMounted(() => {
                     class="h-3 w-3 animate-spin fill-white"
                 ></SpinnerIcon>
             </div>
-            <div class="m-0 flex-auto py-0 pl-[0px] pr-[16px] text-center">
+            <div class="m-0 flex-auto py-0 pr-[16px] text-center">
                 <span class="m-0 p-0 text-[14px]">{{ buttonText }}</span>
             </div>
             <div
@@ -78,20 +84,30 @@ onMounted(() => {
         <div
             v-if="
                 inputData &&
-                inputData.experimentalFeatures &&
                 crewUserData &&
-                crewUserData.crewEmail
+                crewUserData.user &&
+                crewUserData.user?.name
             "
-            class="absolute -bottom-[17px] right-0 m-0 py-0 pl-0 pr-[18px]"
+            class="absolute -bottom-[15px] right-0 m-0 py-0 pl-0 pr-[18px]"
         >
-            <div class="text-[9px] text-gray-400">logged in as</div>
+            <div class="text-italics text-[8px] text-gray-400">
+                <span class="pr-[10px]"
+                    >logged in as {{ crewUserData.user?.name }}</span
+                >
+                <span
+                    @click="logout"
+                    class="cursor-pointer hover:underline"
+                    >Switch user</span
+                >
+            </div>
         </div>
     </div>
 </template>
 <style scoped>
 @import "../style.css";
 
-#cp_primaryButton {
+#cp_primaryButton,
+#cp_primaryButtonHold {
     letter-spacing: -0.5px;
     line-height: 15px;
     font-family: "Montserrat", Arial, Helvetica, sans-serif;

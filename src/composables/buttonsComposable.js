@@ -71,7 +71,7 @@ const sanitizedParams = computed(() => {
     };
     let remappedData = remapData(keys, inputData.data);
     remappedData.version = "v2";
-    return remapData;
+    return remappedData;
 });
 const queryParams = computed(() => {
     const params = new URLSearchParams(sanitizedParams.value);
@@ -229,6 +229,8 @@ export function useButtonsComposable() {
         resetStatus,
         logout,
         attachResponseToForm,
-        formDataKeys
+        formDataKeys,
+        popupFullUrlObject,
+        popupFullUrl
     };
 }

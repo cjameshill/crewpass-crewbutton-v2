@@ -18,6 +18,11 @@ const {
     inputData,
     logout,
     formDataKeys,
+    popupFullUrl,
+    popupFullUrlObject,
+    queryParams,
+    popupUrl,
+    sanitizedParams,
 } = useButtonsComposable();
 const messages = ref([]);
 
@@ -41,6 +46,7 @@ useEventListener(window, "message", (message) => {
 
 onMounted(() => {
     const button = document.getElementById("cp-agency-crew-profile-button");
+    console.log("button dataset: ", button.dataset);
     setButtonData(button.dataset);
     console.log("crewUserData.value: ", crewUserData.value?.status);
     if (crewUserData.value && crewUserData.value?.status) {

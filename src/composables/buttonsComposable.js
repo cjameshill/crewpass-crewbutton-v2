@@ -66,11 +66,12 @@ const loading = ref(false);
 
 const sanitizedParams = computed(() => {
     const keys = {
-        cpPartner: "partner",
+        cpPartner: "partnername",
         cpAction: "action"
     };
     let remappedData = remapData(keys, inputData.data);
     remappedData.version = "v2";
+    remappedData.partner = "agency";
     return remappedData;
 });
 const queryParams = computed(() => {
